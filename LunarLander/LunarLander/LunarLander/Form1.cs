@@ -20,69 +20,13 @@ namespace LunarLander
 
         float GraphicWidth, GraphicHeight;
 
-        private void FindIntersection(
-            PointF p1, PointF p2, PointF p3, PointF p4,
-            out bool lines_intersect, out bool segments_intersect,
-            out PointF intersection)
+
+        private bool IsPointInsideSquare(Rectangle rect,PointF point)
         {
-            // Get the segments' parameters.
-            float dx12 = p2.X - p1.X;
-            float dy12 = p2.Y - p1.Y;
-            float dx34 = p4.X - p3.X;
-            float dy34 = p4.Y - p3.Y;
-
-            // Solve for t1 and t2
-            float denominator = (dy12 * dx34 - dx12 * dy34);
-
-            float t1 =
-                ((p1.X - p3.X) * dy34 + (p3.Y - p1.Y) * dx34)
-                    / denominator;
-            if (float.IsInfinity(t1))
-            {
-                // The lines are parallel (or close enough to it).
-                lines_intersect = false;
-                segments_intersect = false;
-                intersection = new PointF(float.NaN, float.NaN);
-                //close_p1 = new PointF(float.NaN, float.NaN);
-                //close_p2 = new PointF(float.NaN, float.NaN);
-                return;
-            }
-            lines_intersect = true;
-
-            float t2 =
-                ((p3.X - p1.X) * dy12 + (p1.Y - p3.Y) * dx12)
-                    / -denominator;
-
-            // Find the point of intersection.
-            intersection = new PointF(p1.X + dx12 * t1, p1.Y + dy12 * t1);
-
-            // The segments intersect if t1 and t2 are between 0 and 1.
-            segments_intersect =
-                ((t1 >= 0) && (t1 <= 1) &&
-                 (t2 >= 0) && (t2 <= 1));
-
-            // Find the closest points on the segments.
-            if (t1 < 0)
-            {
-                t1 = 0;
-            }
-            else if (t1 > 1)
-            {
-                t1 = 1;
-            }
-
-            if (t2 < 0)
-            {
-                t2 = 0;
-            }
-            else if (t2 > 1)
-            {
-                t2 = 1;
-            }
-
-            //close_p1 = new PointF(p1.X + dx12 * t1, p1.Y + dy12 * t1);
-            //close_p2 = new PointF(p3.X + dx34 * t2, p3.Y + dy34 * t2);
+            return rect.Contains((int)point.X, (int)point.Y);
         }
+
+     
 
 
         class SpaceShip
@@ -215,6 +159,8 @@ namespace LunarLander
             }
         }
 
+        List<Rectangle> TerrainSquares = new List<Rectangle>();
+
         List<Tuple<Tuple<float, float>, Tuple<float, float>, int>> TerrainLines;//=new List<Tuple<float, float, int>>();
         List<SpaceShip> currentPopulation = new List<SpaceShip>();
         SpaceShip currSpaceship;
@@ -274,21 +220,13 @@ namespace LunarLander
 
                 bool linesIntersect = false ;
 
-                foreach (var line in TerrainLines)
+                foreach (Rectangle rect in TerrainSquares)
                 {
-                    float Ax = line.Item1.Item1;
-                    float Ay = line.Item1.Item2;
-                    float Bx = line.Item2.Item1;
-                    float By = line.Item2.Item2;
-                    bool segmentIntersect;
-                    PointF segmentPointIntersect;
-                    FindIntersection(item.MainLineA, item.MainLineB, new PointF(Ax, Ay), new PointF(Bx, By), out linesIntersect, out segmentIntersect, out segmentPointIntersect);
-                    if (segmentIntersect)
+                    if (IsPointInsideSquare(rect, item.MainLineA))
                     {
-                        linesIntersect = true;
                         item.AIAlive = false;
                         SpaceShip.AliveNumber--;
-                        break; 
+                        continue;
                     }
                 }
 
@@ -300,7 +238,7 @@ namespace LunarLander
                 }
             }
 
-            if (SpaceShip.AliveNumber <= 0)
+            if (SpaceShip.AliveNumber <= 200)
             {
                 //Ocena populacije
 
@@ -310,7 +248,7 @@ namespace LunarLander
 
                 //Mutacija
 
-                //Prebacivanje elitnih
+                //Prebacivanje elitnih jedinki
 
                 Random r = new Random();
                 for (int i = 0; i < PopulationSize; i++)
@@ -351,20 +289,13 @@ namespace LunarLander
                     item.draw(g);
             }
 
-            foreach (var line in TerrainLines)
-            {
-                float Ax = line.Item1.Item1;
-                float Ay = line.Item1.Item2;
-                float Bx = line.Item2.Item1;
-                float By = line.Item2.Item2;
-                int fitness = line.Item3;
-                Pen p = new Pen(Color.FromArgb(255 - (fitness / 100) * 255, 244, 8));
-                g.DrawLine(p, Ax, Ay, Bx, By);
-            }
 
             Font drawFont = new Font("Arial", 16);
             SolidBrush sb = new SolidBrush(Color.White);
             g.DrawString("Alive units:" + SpaceShip.AliveNumber, drawFont, sb, 1000, 500);
+
+            //crtanje pravougaonika na osnovu matrice
+            g.DrawRectangle(new Pen(Color.White), new Rectangle(500,500,50,50));
 
         }
 
