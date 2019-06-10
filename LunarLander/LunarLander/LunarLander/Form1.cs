@@ -272,31 +272,35 @@ namespace LunarLander
                 item.AIMovement();
                 item.move();
 
+                bool linesIntersect = false ;
+
                 foreach (var line in TerrainLines)
                 {
                     float Ax = line.Item1.Item1;
                     float Ay = line.Item1.Item2;
                     float Bx = line.Item2.Item1;
                     float By = line.Item2.Item2;
-                    bool linesIntersect;
                     bool segmentIntersect;
                     PointF segmentPointIntersect;
                     FindIntersection(item.MainLineA, item.MainLineB, new PointF(Ax, Ay), new PointF(Bx, By), out linesIntersect, out segmentIntersect, out segmentPointIntersect);
                     if (segmentIntersect)
                     {
+                        linesIntersect = true;
                         item.AIAlive = false;
                         SpaceShip.AliveNumber--;
+                        break; 
                     }
                 }
 
-                if (item.MainLineA.X < 0 || item.MainLineA.X > pictureBox1.Width || item.MainLineA.Y < 0 || item.MainLineA.Y > pictureBox1.Height)
+                if (!linesIntersect &&(item.MainLineA.X < 0 || item.MainLineA.X > pictureBox1.Width || item.MainLineA.Y < 0 || item.MainLineA.Y > pictureBox1.Height))
                 {
                     item.AIAlive = false;
                     SpaceShip.AliveNumber--;
+                    continue;
                 }
             }
 
-            if (SpaceShip.AliveNumber == 0)
+            if (SpaceShip.AliveNumber <= 0)
             {
                 //Ocena populacije
 
