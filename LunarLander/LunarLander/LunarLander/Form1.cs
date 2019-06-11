@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -180,32 +181,38 @@ namespace LunarLander
         {
             GraphicWidth = pictureBox1.Width;
             GraphicHeight = pictureBox1.Height;
+            int SquareWidth = 0;
 
-            TerrainLines = new List<Tuple<Tuple<float, float>, Tuple<float, float>, int>>
+            var path = Path.Combine(Directory.GetCurrentDirectory(), @"Maps\matrix_14x26.txt");
+
+            string absolutePath = @"C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\Maps\matrix_14x26.txt";
+
+            String input = File.ReadAllText(absolutePath);
+            int i = 0, j = 0;
+            int r = 0, c = 0;
+
+            string[] rows = input.Split('\n');
+
+            r = int.Parse(rows[0].Trim());
+            c = int.Parse(rows[1].Trim());
+            SquareWidth = (int)(GraphicWidth / c);
+
+            int[,] terrainMatrix = new int[r, c];
+
+            foreach (var row in rows.Skip(2))
             {
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(0,680),new Tuple<float, float>(100,680),10),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(100,680),new Tuple<float, float>(200,680),20),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(200,680),new Tuple<float, float>(300,680),30),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(300,680),new Tuple<float, float>(400,680),40),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(400,680),new Tuple<float, float>(500,680),45),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(500,680),new Tuple<float, float>(500,250),55),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(500,250),new Tuple<float, float>(580,250),60),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(580,250),new Tuple<float, float>(580,680),80),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(580,680),new Tuple<float, float>(1300,680),100),
-
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(750,0),new Tuple<float, float>(750,50),45),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(750,50),new Tuple<float, float>(850,50),55),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(850,50),new Tuple<float, float>(850,450),60),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(850,450),new Tuple<float, float>(900,450),80),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(900,450),new Tuple<float, float>(900,50),100),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(900,50),new Tuple<float, float>(1300,50),100),
-
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(750,0),new Tuple<float, float>(1300,0),45),
-                new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(1300,0),new Tuple<float, float>(1300,700),45),
-                //new Tuple<Tuple<float, float>, Tuple<float, float>, int>(new Tuple<float, float>(1300,0),new Tuple<float, float>(1300,700),45),
+                j = 0;
+                foreach (var col in row.Trim().Split(' '))
+                {
+                    terrainMatrix[i, j] = int.Parse(col.Trim());
+                    if (terrainMatrix[i, j] > 0)
+                        TerrainSquares.Add(new Rectangle(j * SquareWidth, i * SquareWidth, SquareWidth, SquareWidth));
+                    j++;
+                }
+                i++;
+            }
 
 
-            };
 
 
 
@@ -303,7 +310,10 @@ namespace LunarLander
             g.DrawString("Alive units:" + SpaceShip.AliveNumber, drawFont, sb, 1000, 500);
 
             //crtanje pravougaonika na osnovu matrice
-            g.DrawRectangle(new Pen(Color.White), new Rectangle(500,500,50,50));
+            foreach (Rectangle rect in TerrainSquares)
+            {
+                g.DrawRectangle(new Pen(Color.White), rect);
+            }
 
         }
 
