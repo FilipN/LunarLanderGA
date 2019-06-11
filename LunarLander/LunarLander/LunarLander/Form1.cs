@@ -32,6 +32,7 @@ namespace LunarLander
         class SpaceShip
         {
             public static int AliveNumber { get; set; } = 0;
+            public static float ShipR { get; set; }
 
             List<Tuple<string, int>> run;
             int currAction = -1;
@@ -136,19 +137,26 @@ namespace LunarLander
 
                 MainLineA = new PointF(currX + (float)Math.Sin(ConvertToRadians(angle)) * 10, currY - (float)Math.Cos(ConvertToRadians(angle)) * 10);
                 MainLineB = new PointF(currX, currY);
+
             }
             public void draw(Graphics g)
             {
-                PointF ptL = new PointF(currX - 5, currY + 2);
-                PointF ptR = new PointF(currX + 5, currY + 2);
-                PointF ptU = new PointF(currX, currY - 8);
+                //PointF ptL = new PointF(currX - 5, currY + 2);
+                //PointF ptR = new PointF(currX + 5, currY + 2);
+                //PointF ptU = new PointF(currX, currY - 8);
                 SolidBrush sb = new SolidBrush(Color.White);
-                PointF[] points = { ptL, ptU, ptR };
-                g.FillPolygon(sb, points);
+                //PointF[] points = { ptL, ptU, ptR };
+                //g.FillPolygon(sb, points);
+
+                g.FillEllipse(sb, new RectangleF(currX - SpaceShip.ShipR / 2.0f, currY - SpaceShip.ShipR / 2.0f, SpaceShip.ShipR, SpaceShip.ShipR));
+
 
                 PointF ptAngle = new PointF(currX + (float)Math.Sin(ConvertToRadians(angle)) * 10, currY - (float)Math.Cos(ConvertToRadians(angle)) * 10);
                 Pen pencile = new Pen(Color.Red);
                 g.DrawLine(pencile, ptAngle, new PointF(currX, currY));
+
+                //if (thrustersState)
+                //    g.FillEllipse(sb, new RectangleF(MainLineB.X-SpaceShip.ShipR/2.0f,MainLineB.Y-SpaceShip.ShipR/2.0f,SpaceShip.ShipR,SpaceShip.ShipR));
                 thrustersState = false;
 
             }
