@@ -33,7 +33,7 @@ namespace LunarLander
         class SpaceShip
         {
             public static int AliveNumber { get; set; } = 0;
-            public static float ShipR { get; set; }
+            public static float ShipR { get; set; } = 10;
 
             List<Tuple<string, int>> run;
             int currAction = -1;
@@ -50,7 +50,7 @@ namespace LunarLander
 
             public SpaceShip(List<Tuple<string, int>> inRun)
             {
-                xM = 2f;
+                xM = 1f;
                 yM = 0f;
                 currX = 30;
                 currY = 30;
@@ -64,6 +64,7 @@ namespace LunarLander
 
             public PointF BottomLineA { get; set; }
             public PointF BottomLineB { get; set; }
+            public PointF ThrusterPoint { get; set; }
 
 
             public bool AIAlive { get; set; } = true;
@@ -135,7 +136,7 @@ namespace LunarLander
                 currX += xM;
                 currY += yM;
 
-
+                ThrusterPoint = new PointF(currX - (float)Math.Sin(ConvertToRadians(angle)) * 5, currY + (float)Math.Cos(ConvertToRadians(angle)) * 5);
                 MainLineA = new PointF(currX + (float)Math.Sin(ConvertToRadians(angle)) * 10, currY - (float)Math.Cos(ConvertToRadians(angle)) * 10);
                 MainLineB = new PointF(currX, currY);
 
@@ -145,15 +146,21 @@ namespace LunarLander
                 //PointF ptL = new PointF(currX - 5, currY + 2);
                 //PointF ptR = new PointF(currX + 5, currY + 2);
                 //PointF ptU = new PointF(currX, currY - 8);
-                SolidBrush sb = new SolidBrush(Color.White);
+                SolidBrush sb = new SolidBrush(Color.LightGray);
+                SolidBrush sbWindow = new SolidBrush(Color.SkyBlue);
+                SolidBrush sbThruster = new SolidBrush(Color.Orange);
                 //PointF[] points = { ptL, ptU, ptR };
                 //g.FillPolygon(sb, points);
 
+
+                if(thrustersState)
+                    g.FillEllipse(sbThruster, new RectangleF(ThrusterPoint.X - SpaceShip.ShipR/ 4.0f, ThrusterPoint.Y - SpaceShip.ShipR / 4.0f, SpaceShip.ShipR /2, SpaceShip.ShipR/2 ));
                 g.FillEllipse(sb, new RectangleF(currX - SpaceShip.ShipR / 2.0f, currY - SpaceShip.ShipR / 2.0f, SpaceShip.ShipR, SpaceShip.ShipR));
+                g.FillEllipse(sbWindow, new RectangleF(currX - SpaceShip.ShipR / 4.0f, currY - SpaceShip.ShipR / 4.0f, SpaceShip.ShipR/2, SpaceShip.ShipR/2));
 
 
                 PointF ptAngle = new PointF(currX + (float)Math.Sin(ConvertToRadians(angle)) * 10, currY - (float)Math.Cos(ConvertToRadians(angle)) * 10);
-                Pen pencile = new Pen(Color.Red);
+                Pen pencile = new Pen(Color.Purple);
                 g.DrawLine(pencile, ptAngle, new PointF(currX, currY));
 
                 //if (thrustersState)
@@ -185,7 +192,7 @@ namespace LunarLander
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), @"Maps\matrix_14x26.txt");
 
-            string absolutePath = @"C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\Maps\matrix_14x26.txt";
+            string absolutePath = @"..\..\Maps\matrix_14x26.txt";
 
             String input = File.ReadAllText(absolutePath);
             int i = 0, j = 0;
@@ -253,7 +260,7 @@ namespace LunarLander
                 }
             }
 
-            if (SpaceShip.AliveNumber <= 200)
+            if (SpaceShip.AliveNumber <= 0)
             {
                 //Ocena populacije
 
@@ -306,13 +313,13 @@ namespace LunarLander
 
 
             Font drawFont = new Font("Arial", 16);
-            SolidBrush sb = new SolidBrush(Color.White);
+            SolidBrush sb = new SolidBrush(Color.Moccasin);
             g.DrawString("Alive units:" + SpaceShip.AliveNumber, drawFont, sb, 1000, 500);
 
             //crtanje pravougaonika na osnovu matrice
             foreach (Rectangle rect in TerrainSquares)
             {
-                g.DrawRectangle(new Pen(Color.White), rect);
+                g.FillRectangle(sb, rect);
             }
 
         }

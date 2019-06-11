@@ -21,7 +21,6 @@ C:\Users\filip.novovic\Desktop\LunarLander-20190605T111730Z-001\LunarLander\Luna
 D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\bin\Debug\LunarLander.exe.config
 D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\bin\Debug\LunarLander.exe
 D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\bin\Debug\LunarLander.pdb
-D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.csprojAssemblyReference.cache
 D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.Form1.resources
 D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.Properties.Resources.resources
 D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.csproj.GenerateResource.cache
@@ -48,3 +47,4 @@ C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj
 C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.csproj.CoreCompileInputs.cache
 C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.exe
 C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.pdb
+D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.csprojAssemblyReference.cache
