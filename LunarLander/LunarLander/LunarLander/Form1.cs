@@ -22,13 +22,36 @@ namespace LunarLander
         float GraphicWidth, GraphicHeight;
 
 
-        private bool IsPointInsideSquare(Rectangle rect,PointF point)
+        private bool IsPointInsideSquare(Rectangle rect, PointF point)
         {
             return rect.Contains((int)point.X, (int)point.Y);
         }
 
-     
 
+        class TerrainBlock
+        {
+            public Rectangle Bounds{get;set;}
+            public int Fitness { get; set; }
+            public int NumberOfAIEnds { get; set; } = 0;
+            public TerrainBlock(Rectangle boundsIn,int fitnessIn)
+            {
+                Bounds = boundsIn;
+                Fitness = fitnessIn;
+            }
+            public void draw(Graphics g)
+            {
+                SolidBrush sb = new SolidBrush(Color.FromArgb(255,255- (int)((Fitness/100.0f)*255.0f), (int)((Fitness / 100.0f) * 255),0));
+                if (Fitness == 1)
+                    sb = new SolidBrush(Color.LightSlateGray);
+                g.FillRectangle(sb, Bounds);
+
+
+                Font drawFont = new Font("Arial", 8);
+                SolidBrush fn = new SolidBrush(Color.White);
+                g.DrawString(NumberOfAIEnds.ToString(), drawFont, fn, Bounds.X, Bounds.Y);
+            }
+
+        }
 
         class SpaceShip
         {
@@ -143,15 +166,10 @@ namespace LunarLander
             }
             public void draw(Graphics g)
             {
-                //PointF ptL = new PointF(currX - 5, currY + 2);
-                //PointF ptR = new PointF(currX + 5, currY + 2);
-                //PointF ptU = new PointF(currX, currY - 8);
+
                 SolidBrush sb = new SolidBrush(Color.LightGray);
                 SolidBrush sbWindow = new SolidBrush(Color.SkyBlue);
                 SolidBrush sbThruster = new SolidBrush(Color.Orange);
-                //PointF[] points = { ptL, ptU, ptR };
-                //g.FillPolygon(sb, points);
-
 
                 if(thrustersState)
                     g.FillEllipse(sbThruster, new RectangleF(ThrusterPoint.X - SpaceShip.ShipR/ 4.0f, ThrusterPoint.Y - SpaceShip.ShipR / 4.0f, SpaceShip.ShipR /2, SpaceShip.ShipR/2 ));
@@ -162,9 +180,6 @@ namespace LunarLander
                 PointF ptAngle = new PointF(currX + (float)Math.Sin(ConvertToRadians(angle)) * 10, currY - (float)Math.Cos(ConvertToRadians(angle)) * 10);
                 Pen pencile = new Pen(Color.Purple);
                 g.DrawLine(pencile, ptAngle, new PointF(currX, currY));
-
-                //if (thrustersState)
-                //    g.FillEllipse(sb, new RectangleF(MainLineB.X-SpaceShip.ShipR/2.0f,MainLineB.Y-SpaceShip.ShipR/2.0f,SpaceShip.ShipR,SpaceShip.ShipR));
                 thrustersState = false;
 
             }
@@ -175,14 +190,14 @@ namespace LunarLander
             }
         }
 
-        List<Rectangle> TerrainSquares = new List<Rectangle>();
+        List<TerrainBlock> TerrainSquares = new List<TerrainBlock>();
 
         List<Tuple<Tuple<float, float>, Tuple<float, float>, int>> TerrainLines;//=new List<Tuple<float, float, int>>();
         List<SpaceShip> currentPopulation = new List<SpaceShip>();
         SpaceShip currSpaceship;
 
         int EliteUnits = 100;
-        int PopulationSize = 2000;
+        int PopulationSize = 1000;
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -213,7 +228,7 @@ namespace LunarLander
                 {
                     terrainMatrix[i, j] = int.Parse(col.Trim());
                     if (terrainMatrix[i, j] > 0)
-                        TerrainSquares.Add(new Rectangle(j * SquareWidth, i * SquareWidth, SquareWidth, SquareWidth));
+                        TerrainSquares.Add(new TerrainBlock(new Rectangle(j * SquareWidth, i * SquareWidth, SquareWidth, SquareWidth), terrainMatrix[i, j]));
                     j++;
                 }
                 i++;
@@ -242,17 +257,18 @@ namespace LunarLander
 
                 bool linesIntersect = false ;
 
-                foreach (Rectangle rect in TerrainSquares)
+                foreach (TerrainBlock block in TerrainSquares)
                 {
-                    if (IsPointInsideSquare(rect, item.MainLineA))
+                    if (IsPointInsideSquare(block.Bounds, item.MainLineB))
                     {
+                        block.NumberOfAIEnds++;
                         item.AIAlive = false;
                         SpaceShip.AliveNumber--;
                         continue;
                     }
                 }
 
-                if (!linesIntersect &&(item.MainLineA.X < 0 || item.MainLineA.X > pictureBox1.Width || item.MainLineA.Y < 0 || item.MainLineA.Y > pictureBox1.Height))
+                if (!linesIntersect &&(item.MainLineB.X < 0 || item.MainLineB.X > pictureBox1.Width || item.MainLineB.Y < 0 || item.MainLineB.Y > pictureBox1.Height))
                 {
                     item.AIAlive = false;
                     SpaceShip.AliveNumber--;
@@ -313,13 +329,14 @@ namespace LunarLander
 
 
             Font drawFont = new Font("Arial", 16);
-            SolidBrush sb = new SolidBrush(Color.Moccasin);
+            SolidBrush sb = new SolidBrush(Color.DarkGray);
             g.DrawString("Alive units:" + SpaceShip.AliveNumber, drawFont, sb, 1000, 500);
 
             //crtanje pravougaonika na osnovu matrice
-            foreach (Rectangle rect in TerrainSquares)
+            foreach (TerrainBlock block in TerrainSquares)
             {
-                g.FillRectangle(sb, rect);
+                block.draw(g);
+                //g.FillRectangle(sb, rect);
             }
 
         }
