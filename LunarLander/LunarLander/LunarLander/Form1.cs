@@ -53,12 +53,26 @@ namespace LunarLander
 
         }
 
-        class SpaceShip
+        class SpaceShip : IComparable
         {
+            private float GAFinalVerticalSpeed { get; set; }
+            private float GAFinalHorizontalSpeed { get; set; }
+            private float GALandingBlock { get; set; } = 0;
+            public float GAFitnessFunction { get; set; }
+
+            public void StopShip(float blockFitness)
+            {
+                GAFinalHorizontalSpeed = Math.Abs(xM);
+                GAFinalVerticalSpeed = Math.Abs(yM);
+                GALandingBlock = blockFitness;
+
+                GAFitnessFunction = GALandingBlock * 1.5f;// + 15.0f / GAFinalHorizontalSpeed + 10.0f / GAFinalVerticalSpeed;
+            }
+
             public static int AliveNumber { get; set; } = 0;
             public static float ShipR { get; set; } = 10;
 
-            List<Tuple<string, int>> run;
+            public List<Tuple<string, int>> run { get; set; }
             int currAction = -1;
             string currActionCode;
             int currActionTicksLeft = 0;
@@ -70,14 +84,16 @@ namespace LunarLander
             public float yM;
             public float angle;
             bool thrustersState = false;
+            bool elite;
 
-            public SpaceShip(List<Tuple<string, int>> inRun)
+            public SpaceShip(List<Tuple<string, int>> inRun, bool inElite = false)
             {
                 xM = 1f;
                 yM = 0f;
                 currX = 30;
                 currY = 30;
                 run = inRun;
+                elite = inElite;
             }
 
 
@@ -167,7 +183,11 @@ namespace LunarLander
             public void draw(Graphics g)
             {
 
-                SolidBrush sb = new SolidBrush(Color.LightGray);
+                Color shipColor = Color.LightGray;
+                if (elite)
+                    shipColor = Color.GreenYellow;
+
+                SolidBrush sb = new SolidBrush(shipColor);
                 SolidBrush sbWindow = new SolidBrush(Color.SkyBlue);
                 SolidBrush sbThruster = new SolidBrush(Color.Orange);
 
@@ -187,6 +207,15 @@ namespace LunarLander
             public void applyThrusters()
             {
                 thrustersState = true;
+            }
+
+            public int CompareTo(object obj)
+            {
+                if (obj == null)
+                    return 1;
+
+                SpaceShip sp = obj as SpaceShip;
+                return GAFitnessFunction.CompareTo(GAFitnessFunction);
             }
         }
 
@@ -263,6 +292,8 @@ namespace LunarLander
                     {
                         block.NumberOfAIEnds++;
                         item.AIAlive = false;
+                        item.StopShip(block.Fitness);
+
                         SpaceShip.AliveNumber--;
                         continue;
                     }
@@ -278,7 +309,22 @@ namespace LunarLander
 
             if (SpaceShip.AliveNumber <= 0)
             {
-                //Ocena populacije
+
+                List<SpaceShip> oldPopulation = currentPopulation;
+                if (oldPopulation.Count > 0)
+                {
+                    oldPopulation = oldPopulation.OrderByDescending(it=>it.GAFitnessFunction).ToList<SpaceShip>();
+                    currentPopulation = new List<SpaceShip>();
+
+                    for (int i = 0; i < EliteUnits; i++)
+                    {
+                        currentPopulation.Add(new SpaceShip(oldPopulation[i].run, true));
+                    }
+                }
+
+                //Prebacivanje elitnih jedinki
+
+
 
                 //Sledeca populacija
 
@@ -286,10 +332,9 @@ namespace LunarLander
 
                 //Mutacija
 
-                //Prebacivanje elitnih jedinki
 
                 Random r = new Random();
-                for (int i = 0; i < PopulationSize; i++)
+                while(currentPopulation.Count< PopulationSize)
                 {
                     List<Tuple<string, int>> currRun = new List<Tuple<string, int>>();
                     for (int j = 0; j < 20; j++)
