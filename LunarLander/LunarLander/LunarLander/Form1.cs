@@ -53,8 +53,78 @@ namespace LunarLander
 
         }
 
+        class GeneticAlgorithm
+        {
+            public static int GenerationSize = 1000;
+            public static int ReproductionSize = 200;
+            public static int MaxIterations = 1000;
+            public static double MutationRate = 0.1;
+
+
+            private static double GetRandomDouble(Random random, double min, double max)
+            {
+                return min + (random.NextDouble() * (max - min));
+            }
+
+            
+
+
+            private static SpaceShip RouletteSelction(List<SpaceShip> population)
+            {
+                List<SpaceShip> selected = new List<SpaceShip>();
+
+                double totalFitness = population.Sum(x => x.GAFitnessFunction);
+                var random = new Random();
+                double selectedValue = GetRandomDouble(random, 0, totalFitness);
+
+                double currentSum = 0;
+
+                for (int i = 0; i < GenerationSize; i++)
+                {
+                    currentSum += population[i].GAFitnessFunction;
+                    //vraca se prva jedinka koja ispuni uslov
+                    if (currentSum > selectedValue)
+                        return population[i];
+                }
+
+                return null;
+            }
+
+            //jednopoziciono ukrstanje sa nasumicnom tackom
+            private static List<List<Tuple<string, int>>> Crossover(SpaceShip parent1 , SpaceShip parent2)
+            {
+
+                //public List<Tuple<string, int>> run
+                List<List<Tuple<string, int>>> children = new List<List<Tuple<string, int>>>(2);
+                Random r = new Random();
+                int breakPoint = r.Next(1, SpaceShip.ChromosomeSize);
+                
+                List<Tuple<string, int>> child1 = parent1.run.Take(breakPoint).ToList().Concat(parent2.run.Skip(breakPoint).ToList()).ToList();
+                List<Tuple<string, int>> child2 = parent2.run.Take(breakPoint).ToList().Concat(parent1.run.Skip(breakPoint).ToList()).ToList();
+                children.Add(child1);
+                children.Add(child2);
+                return children;
+            }
+
+
+            private static SpaceShip mutate(SpaceShip ship)
+            {
+                Random r = new Random();
+                double randomValue = r.NextDouble();
+                if(randomValue< MutationRate)
+                {
+                    int randomIndex = r.Next(SpaceShip.ChromosomeSize);
+                    //ship.run[i]
+                }
+                return ship;
+            }
+        }
+
         class SpaceShip : IComparable
         {
+
+            public static int ChromosomeSize = 20;
+
             private float GAFinalVerticalSpeed { get; set; }
             private float GAFinalHorizontalSpeed { get; set; }
             private float GALandingBlock { get; set; } = 0;
@@ -66,7 +136,19 @@ namespace LunarLander
                 GAFinalVerticalSpeed = Math.Abs(yM);
                 GALandingBlock = blockFitness;
 
-                GAFitnessFunction = GALandingBlock * 1.5f;// + 15.0f / GAFinalHorizontalSpeed + 10.0f / GAFinalVerticalSpeed;
+                float WGAFinalHorizontalSpeed = GAFinalHorizontalSpeed;
+                if (GAFinalHorizontalSpeed > 1)
+                    WGAFinalHorizontalSpeed = 10.0f / GAFinalHorizontalSpeed;
+                else
+                    WGAFinalHorizontalSpeed = 30;
+
+                float WGAFinalVerticalSpeed = GAFinalVerticalSpeed;
+                if (GAFinalVerticalSpeed > 1)
+                    WGAFinalVerticalSpeed = 10.0f / GAFinalVerticalSpeed;
+                else
+                    WGAFinalVerticalSpeed = 30;
+
+                GAFitnessFunction = GALandingBlock*1.5f+WGAFinalHorizontalSpeed+WGAFinalVerticalSpeed;// + 15.0f / GAFinalHorizontalSpeed + 10.0f / GAFinalVerticalSpeed;
             }
 
             public static int AliveNumber { get; set; } = 0;
@@ -225,7 +307,7 @@ namespace LunarLander
         List<SpaceShip> currentPopulation = new List<SpaceShip>();
         SpaceShip currSpaceship;
 
-        int EliteUnits = 100;
+        int EliteUnits = 50;
         int PopulationSize = 1000;
 
         private void Form1_Load(object sender, EventArgs e)
@@ -293,9 +375,9 @@ namespace LunarLander
                         block.NumberOfAIEnds++;
                         item.AIAlive = false;
                         item.StopShip(block.Fitness);
-
+                        linesIntersect = true;
                         SpaceShip.AliveNumber--;
-                        continue;
+                        break;
                     }
                 }
 
@@ -310,7 +392,7 @@ namespace LunarLander
             if (SpaceShip.AliveNumber <= 0)
             {
 
-                List<SpaceShip> oldPopulation = currentPopulation;
+                /*List<SpaceShip> oldPopulation = currentPopulation;
                 if (oldPopulation.Count > 0)
                 {
                     oldPopulation = oldPopulation.OrderByDescending(it=>it.GAFitnessFunction).ToList<SpaceShip>();
@@ -320,20 +402,24 @@ namespace LunarLander
                     {
                         currentPopulation.Add(new SpaceShip(oldPopulation[i].run, true));
                     }
-                }
+                } */
 
+                
                 //Prebacivanje elitnih jedinki
 
 
 
-                //Sledeca populacija
+                //Sledeca populacija ruletska selekcija
+
+
+
 
                 //Ukrstanje
 
                 //Mutacija
 
 
-                Random r = new Random();
+                
                 while(currentPopulation.Count< PopulationSize)
                 {
                     List<Tuple<string, int>> currRun = new List<Tuple<string, int>>();
@@ -358,6 +444,7 @@ namespace LunarLander
             pictureBox1.Refresh();
         }
 
+       
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
