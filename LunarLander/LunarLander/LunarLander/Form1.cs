@@ -91,33 +91,84 @@ namespace LunarLander
             }
 
             //jednopoziciono ukrstanje sa nasumicnom tackom
-            private static List<List<Tuple<string, int>>> Crossover(SpaceShip parent1 , SpaceShip parent2)
+            private static List<SpaceShip> Crossover(SpaceShip parent1 , SpaceShip parent2)
             {
 
                 //public List<Tuple<string, int>> run
-                List<List<Tuple<string, int>>> children = new List<List<Tuple<string, int>>>(2);
+                List<SpaceShip> children = new List<SpaceShip>(2);
                 Random r = new Random();
                 int breakPoint = r.Next(1, SpaceShip.ChromosomeSize);
                 
-                List<Tuple<string, int>> child1 = parent1.run.Take(breakPoint).ToList().Concat(parent2.run.Skip(breakPoint).ToList()).ToList();
-                List<Tuple<string, int>> child2 = parent2.run.Take(breakPoint).ToList().Concat(parent1.run.Skip(breakPoint).ToList()).ToList();
+                List<Tuple<string, int>> child1Run = parent1.run.Take(breakPoint).ToList().Concat(parent2.run.Skip(breakPoint).ToList()).ToList();
+                List<Tuple<string, int>> child2Run = parent2.run.Take(breakPoint).ToList().Concat(parent1.run.Skip(breakPoint).ToList()).ToList();
+                SpaceShip child1 = new SpaceShip(child1Run);
+                SpaceShip child2 = new SpaceShip(child2Run);
+
                 children.Add(child1);
                 children.Add(child2);
                 return children;
             }
 
 
-            private static SpaceShip mutate(SpaceShip ship)
+            private static SpaceShip Mutate(SpaceShip ship)
             {
                 Random r = new Random();
                 double randomValue = r.NextDouble();
                 if(randomValue< MutationRate)
                 {
                     int randomIndex = r.Next(SpaceShip.ChromosomeSize);
-                    //ship.run[i]
+                    int actionR = r.Next(4);
+                    if (actionR == 0)
+                    {
+                        Tuple<string, int> newRun = new Tuple<string, int>("NT", r.Next(100, 400));
+                        ship.run[randomIndex] = newRun;
+                    }
+                    if (actionR == 1)
+                    {
+                        Tuple<string, int> newRun = new Tuple<string, int>("RL", r.Next(10, 25));
+                        ship.run[randomIndex] = newRun;
+                    }
+                        
+                    if (actionR == 2)
+                    {
+                        Tuple<string, int> newRun = new Tuple<string, int>("RR", r.Next(10, 25));
+                        ship.run[randomIndex] = newRun;
+                    }
+                    if (actionR == 3)
+                    {
+                        Tuple<string, int> newRun = new Tuple<string, int>("TH", r.Next(10, 25));
+                        ship.run[randomIndex] = newRun;
+                    }
                 }
                 return ship;
             }
+
+            //kreiranje nove generacije od selektovanih jedinki
+            private static List<SpaceShip> CreateGeneration(List<SpaceShip> selectedPopulation)
+            {
+                int generationSize = 0;
+                List<SpaceShip> newGeneration = new List<SpaceShip>();
+                Random r = new Random();
+                while(generationSize<GenerationSize)
+                {
+                    List<SpaceShip> parents = selectedPopulation.OrderBy(x => r.Next()).Take(2).ToList();
+                    SpaceShip p1 = parents[0]; SpaceShip p2 = parents[1];
+
+
+                    //dobijaju se deca ukrstanjem
+                    List<SpaceShip> children = Crossover(p1, p2);
+                    SpaceShip c1 = children[0]; SpaceShip c2 = children[1];
+
+                    //deca mutiraju
+                    c1 = Mutate(c1); c2 = Mutate(c2);
+
+                    //dodaju se u generaciju
+                    newGeneration.Add(c1); newGeneration.Add(c2);
+                    generationSize += 2;
+                }
+                return newGeneration;
+            }
+            
         }
 
         class SpaceShip : IComparable
@@ -404,7 +455,7 @@ namespace LunarLander
                     }
                 } */
 
-                
+
                 //Prebacivanje elitnih jedinki
 
 
@@ -419,7 +470,7 @@ namespace LunarLander
                 //Mutacija
 
 
-                
+                Random r = new Random();
                 while(currentPopulation.Count< PopulationSize)
                 {
                     List<Tuple<string, int>> currRun = new List<Tuple<string, int>>();
