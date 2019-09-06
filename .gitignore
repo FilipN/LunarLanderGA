@@ -5,3 +5,4 @@
 /.vs
 LunarLander/LunarLander/LunarLander/bin/Debug/LunarLander.exe
 LunarLander/LunarLander/LunarLander/bin/Debug/LunarLander.pdb
+/LunarLander/LunarLander/.vs/LunarLander/v16/Server/sqlite3/db.lock
