@@ -82,7 +82,6 @@ namespace LunarLander
 
             //currSpaceship = new SpaceShip();
             pictureBox1.BackColor = Color.Black;
-            timer1.Start();
 
         }
 
@@ -233,26 +232,39 @@ namespace LunarLander
             InfiksanBrojIteracija = radioButton3.Checked;
             InruletskaSelekcija = radioButton1.Checked;
 
-            if (!Int32.TryParse(textBox5.Text,out InPopulationSize) || InPopulationSize<=0 || InPopulationSize>4000)
+            if (!Int32.TryParse(textBox5.Text, out InPopulationSize) || InPopulationSize <= 0 || InPopulationSize > 4000)
+            {
                 MessageBox.Show("Velicina populacije nije broj izmedju 0 i 4000");
+                return;
+            }
 
             if (!InruletskaSelekcija && (!Int32.TryParse(textBox6.Text, out InVelicinaTurnira) || InVelicinaTurnira <= 5 || InVelicinaTurnira > 20))
+            {
                 MessageBox.Show("Velicina turnira nije broj izmedju 5 i 20");
-
+                return;
+            }
             if (!float.TryParse(textBox1.Text, out InProcenatMutacijePopulacije) || InProcenatMutacijePopulacije <= 0 || InProcenatMutacijePopulacije > 40)
+            {
                 MessageBox.Show("Procenat mutacije populacije nije broj izmedju 0 i 40");
-
+                return;
+            }
             if (!float.TryParse(textBox2.Text, out InProcenatMutacijeJedinke) || InProcenatMutacijeJedinke <= 0 || InProcenatMutacijeJedinke > 40)
+            {
                 MessageBox.Show("Procenat mutacije jedinke nije broj izmedju 0 i 40");
-
+                return;
+            }
             if (!Int32.TryParse(textBox4.Text, out InBrojElitnihJedinki) || InBrojElitnihJedinki <= 0 || InBrojElitnihJedinki > 5000)
+            {
                 MessageBox.Show("Broj elitnih jedinki nije broj izmedju 0 i 4000");
-
+                return;
+            }
             if (InfiksanBrojIteracija && (!Int32.TryParse(textBox7.Text, out InBrojIteracija) || InBrojIteracija <= 0 || InBrojIteracija > 5000))
+            {
                 MessageBox.Show("Broj iteracija nije broj izmedju 0 i 4000");
+                return;
+            }
             InmapPathFile = openFileDialog1.FileName;
-
-
+            timer1.Start();
         }
 
         private void button2_Click(object sender, EventArgs e)
