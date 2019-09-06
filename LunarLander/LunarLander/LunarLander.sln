@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LunarLander", "LunarLander\LunarLander.csproj", "{0532A77F-4485-4D70-804D-314F94C27C49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{CC3F1A5A-0222-4A5E-A21E-FD17140DF95A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{0532A77F-4485-4D70-804D-314F94C27C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0532A77F-4485-4D70-804D-314F94C27C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0532A77F-4485-4D70-804D-314F94C27C49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC3F1A5A-0222-4A5E-A21E-FD17140DF95A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC3F1A5A-0222-4A5E-A21E-FD17140DF95A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC3F1A5A-0222-4A5E-A21E-FD17140DF95A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC3F1A5A-0222-4A5E-A21E-FD17140DF95A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
