@@ -19,6 +19,11 @@ namespace LunarLander
             InitializeComponent();
         }
 
+        int InPopulationSize, InVelicinaTurnira, InBrojElitnihJedinki, InBrojIteracija;
+        float InProcenatMutacijePopulacije, InProcenatMutacijeJedinke;
+        string InmapPathFile = "";
+        bool InruletskaSelekcija, InfiksanBrojIteracija;
+
         float GraphicWidth, GraphicHeight;
 
 
@@ -532,6 +537,55 @@ namespace LunarLander
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
 
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            InfiksanBrojIteracija = radioButton3.Checked;
+            InruletskaSelekcija = radioButton1.Checked;
+
+            if (!Int32.TryParse(textBox5.Text,out InPopulationSize) || InPopulationSize<=0 || InPopulationSize>4000)
+                MessageBox.Show("Velicina populacije nije broj izmedju 0 i 4000");
+
+            if (!InruletskaSelekcija && (!Int32.TryParse(textBox6.Text, out InVelicinaTurnira) || InVelicinaTurnira <= 5 || InVelicinaTurnira > 20))
+                MessageBox.Show("Velicina turnira nije broj izmedju 5 i 20");
+
+            if (!float.TryParse(textBox1.Text, out InProcenatMutacijePopulacije) || InProcenatMutacijePopulacije <= 0 || InProcenatMutacijePopulacije > 40)
+                MessageBox.Show("Procenat mutacije populacije nije broj izmedju 0 i 40");
+
+            if (!float.TryParse(textBox2.Text, out InProcenatMutacijeJedinke) || InProcenatMutacijeJedinke <= 0 || InProcenatMutacijeJedinke > 40)
+                MessageBox.Show("Procenat mutacije jedinke nije broj izmedju 0 i 40");
+
+            if (!Int32.TryParse(textBox4.Text, out InBrojElitnihJedinki) || InBrojElitnihJedinki <= 0 || InBrojElitnihJedinki > 5000)
+                MessageBox.Show("Broj elitnih jedinki nije broj izmedju 0 i 4000");
+
+            if (InfiksanBrojIteracija && (!Int32.TryParse(textBox7.Text, out InBrojIteracija) || InBrojIteracija <= 0 || InBrojIteracija > 5000))
+                MessageBox.Show("Broj iteracija nije broj izmedju 0 i 4000");
+            InmapPathFile = openFileDialog1.FileName;
+
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = "";
+            openFileDialog1.Title = "Učitavanje mape";
+            DialogResult putanjaFajla = openFileDialog1.ShowDialog();
         }
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
