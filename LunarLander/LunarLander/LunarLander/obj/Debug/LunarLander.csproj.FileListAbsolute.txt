@@ -48,3 +48,13 @@ C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj
 C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.exe
 C:\Users\Anci\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.pdb
 D:\GitHub\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.csprojAssemblyReference.cache
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\bin\Debug\LunarLander.exe.config
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\bin\Debug\LunarLander.exe
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\bin\Debug\LunarLander.pdb
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.csprojAssemblyReference.cache
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.Form1.resources
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.Properties.Resources.resources
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.csproj.GenerateResource.cache
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.csproj.CoreCompileInputs.cache
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.exe
+C:\Users\Ancika\Source\Repos\LunarLanderGA\LunarLander\LunarLander\LunarLander\obj\Debug\LunarLander.pdb

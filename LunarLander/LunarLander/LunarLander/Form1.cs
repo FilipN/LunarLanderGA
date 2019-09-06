@@ -60,19 +60,32 @@ namespace LunarLander
             public static int MaxIterations = 1000;
             public static double MutationRate = 0.1;
 
+            //velicina turnira za turnirsku selekciju
+            public static int TournamentSize = 10;
 
             private static double GetRandomDouble(Random random, double min, double max)
             {
                 return min + (random.NextDouble() * (max - min));
             }
 
-            
+            private static List<int> GetNRandomIntegers(int count, int maxValue, int minValue=0)
+            {
+                HashSet<int> candidates = new HashSet<int>();
+                Random r = new Random();
+                while (candidates.Count < count)
+                {
+                    // May strike a duplicate.
+                    candidates.Add(r.Next(minValue,maxValue));
+                }
 
+                return candidates.ToList();
+            }
 
+            //Selekcija ruletska- vece sanse da u reprodukciji ucestvuju jedinke koje su vise prilagodjenje
+            //verovatnoca da jedinka i ucestvuje u reprodukciji je f(i)/suma po j f(j)
             private static SpaceShip RouletteSelction(List<SpaceShip> population)
             {
-                List<SpaceShip> selected = new List<SpaceShip>();
-
+                
                 double totalFitness = population.Sum(x => x.GAFitnessFunction);
                 var random = new Random();
                 double selectedValue = GetRandomDouble(random, 0, totalFitness);
@@ -82,12 +95,34 @@ namespace LunarLander
                 for (int i = 0; i < GenerationSize; i++)
                 {
                     currentSum += population[i].GAFitnessFunction;
-                    //vraca se prva jedinka koja ispuni uslov
+                    //vraca se prva jedinka koja ispuni uslov 
                     if (currentSum > selectedValue)
                         return population[i];
                 }
 
                 return null;
+            }
+
+
+            //pobednik turnira je jedinka sa najboljom prilagodjenoscu
+            //sto je veca velicina turnira nekvalitetne jedinke imaju manje sanse da budu izabrane
+            private static SpaceShip TournamentSelction(List<SpaceShip> population)
+            {
+
+                List<int> tournamet = GetNRandomIntegers(GeneticAlgorithm.TournamentSize, GeneticAlgorithm.GenerationSize);
+                float max = 0;
+                int maxIndex=0;
+                foreach(int i in tournamet)
+                {
+                    if (population[i].GAFitnessFunction > max)
+                    {
+                        max = population[i].GAFitnessFunction;
+                        maxIndex = i;
+                    }
+                }
+
+                return population[maxIndex];    
+                
             }
 
             //jednopoziciono ukrstanje sa nasumicnom tackom
@@ -97,7 +132,7 @@ namespace LunarLander
                 //public List<Tuple<string, int>> run
                 List<SpaceShip> children = new List<SpaceShip>(2);
                 Random r = new Random();
-                int breakPoint = r.Next(1, SpaceShip.ChromosomeSize);
+                int breakPoint = r.Next(1, SpaceShip.ChromosomeSize-1);
                 
                 List<Tuple<string, int>> child1Run = parent1.run.Take(breakPoint).ToList().Concat(parent2.run.Skip(breakPoint).ToList()).ToList();
                 List<Tuple<string, int>> child2Run = parent2.run.Take(breakPoint).ToList().Concat(parent1.run.Skip(breakPoint).ToList()).ToList();
@@ -109,7 +144,30 @@ namespace LunarLander
                 return children;
             }
 
+            //jednopoziciono ukrstanje sa nasumicnom tackom
+            private static List<SpaceShip> CrossoverTwoPoints(SpaceShip parent1, SpaceShip parent2)
+            {
 
+                //public List<Tuple<string, int>> run
+                List<SpaceShip> children = new List<SpaceShip>(2);
+                List<int> breakPoints = GetNRandomIntegers(2, SpaceShip.ChromosomeSize - 1, 1);
+                breakPoints.Sort();
+
+                List<Tuple<string, int>> child1Run = parent1.run.Take(breakPoints[0]).ToList().Concat(parent2.run.Skip(breakPoints[0]).Take(breakPoints[1]).ToList()).ToList().Concat(parent1.run.Skip(breakPoints[0]+breakPoints[1]).ToList()).ToList();
+                List<Tuple<string, int>> child2Run = parent2.run.Take(breakPoints[0]).ToList().Concat(parent1.run.Skip(breakPoints[0]).Take(breakPoints[1]).ToList()).ToList().Concat(parent2.run.Skip(breakPoints[0] + breakPoints[1]).ToList()).ToList();
+                SpaceShip child1 = new SpaceShip(child1Run);
+                SpaceShip child2 = new SpaceShip(child2Run);
+
+                children.Add(child1);
+                children.Add(child2);
+                return children;
+            }
+
+            //Mutacija treba da spreci da jedinke iz populacije postanu suvise slicne i da pomogne u obnavljanju genetskog materijala
+            //ukoliko u jednoj generaciji sve jedinke imaju istu vrednost jednog gena, onda taj gen samo ukrstanjem nikada ne bi mogao da se promeni
+            //omogucavaju razmatranje novih delova prostrora pretrage u nadi da ce se naici na globalni ekstremum
+            //Ukoliko je verovatnoca mutacije velika, onda usmeravanje pretrage postaje preslabo i ona pocinje da lici na slucajnu pretragu
+  
             private static SpaceShip Mutate(SpaceShip ship)
             {
                 Random r = new Random();
@@ -151,6 +209,7 @@ namespace LunarLander
                 Random r = new Random();
                 while(generationSize<GenerationSize)
                 {
+                    
                     List<SpaceShip> parents = selectedPopulation.OrderBy(x => r.Next()).Take(2).ToList();
                     SpaceShip p1 = parents[0]; SpaceShip p2 = parents[1];
 
