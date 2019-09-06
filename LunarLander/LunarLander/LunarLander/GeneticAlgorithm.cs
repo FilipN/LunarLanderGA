@@ -8,10 +8,23 @@ namespace LunarLander
 {
     public class GeneticAlgorithm
     {
-        public static int GenerationSize = 1000;
-        public static int ReproductionSize = 200;
-        public static int MaxIterations = 1000;
-        public static double MutationRate = 0.2;
+        public static int GenerationSize;
+        public static int ReproductionSize;
+        public static int MaxIterations;
+        public static double MutationRate;
+        public static string SelectionMethod;
+        public static string CrossoverMethod;
+
+        public static void SetParameters(int generationSize, int reproductionSize, int maxIterations, double mutationRate, string selection, string crossover)
+        {
+            GenerationSize = generationSize;
+            ReproductionSize = reproductionSize;
+            MaxIterations = maxIterations;
+            MutationRate = mutationRate;
+            SelectionMethod = selection;
+            CrossoverMethod = crossover;
+
+        }
 
         //velicina turnira za turnirsku selekciju
         public static int TournamentSize = 10;
@@ -37,7 +50,7 @@ namespace LunarLander
 
         //Selekcija ruletska- vece sanse da u reprodukciji ucestvuju jedinke koje su vise prilagodjenje
         //verovatnoca da jedinka i ucestvuje u reprodukciji je f(i)/suma po j f(j)
-        public static SpaceShip RouletteSelction(List<SpaceShip> population)
+        public static SpaceShip RouletteSelection(List<SpaceShip> population)
         {
 
             double totalFitness = population.Sum(x => x.GAFitnessFunction);
@@ -59,7 +72,7 @@ namespace LunarLander
 
         //pobednik turnira je jedinka sa najboljom prilagodjenoscu
         //sto je veca velicina turnira nekvalitetne jedinke imaju manje sanse da budu izabrane
-        public static SpaceShip TournamentSelction(List<SpaceShip> population)
+        public static SpaceShip TournamentSelection(List<SpaceShip> population)
         {
 
             List<int> tournamet = GetNRandomIntegers(GeneticAlgorithm.TournamentSize, GeneticAlgorithm.GenerationSize);
@@ -79,7 +92,7 @@ namespace LunarLander
         }
 
         //jednopoziciono ukrstanje sa nasumicnom tackom
-        public static List<SpaceShip> Crossover(SpaceShip parent1, SpaceShip parent2)
+        public static List<SpaceShip> CrossoverOnePoint(SpaceShip parent1, SpaceShip parent2)
         {
 
             //public List<Tuple<string, int>> run
@@ -154,31 +167,35 @@ namespace LunarLander
             return ship;
         }
 
-        //kreiranje nove generacije od selektovanih jedinki
-        public static List<SpaceShip> CreateGeneration(List<SpaceShip> selectedPopulation)
+
+        /* def selection(self, chromosomes):
+         selected = []
+
+         # Bira se self.reproduction_size hromozoma za reprodukciju
+         # Selekcija moze biti ruletska ili turnirska
+         for i in range(self.reproduction_size) :
+             if self.selection_type == 'roulette':
+                 selected.append(self.roulette_selection(chromosomes))
+             elif self.selection_type == 'tournament':
+                 selected.append(self.tournament_selection(chromosomes))
+
+         # Vracaju se izabrani hromozomi za repodukciju
+         return selected*/
+        public static List<SpaceShip> Selection(List<SpaceShip> currentPopulation)
         {
-            int generationSize = 0;
-            List<SpaceShip> newGeneration = new List<SpaceShip>();
-            Random r = new Random();
-            while (generationSize < GenerationSize)
+            List<SpaceShip> selected = new List<SpaceShip>();
+            for (int i=0; i<ReproductionSize; i++)
             {
-
-                List<SpaceShip> parents = selectedPopulation.OrderBy(x => r.Next()).Take(2).ToList();
-                SpaceShip p1 = parents[0]; SpaceShip p2 = parents[1];
-
-
-                //dobijaju se deca ukrstanjem
-                List<SpaceShip> children = Crossover(p1, p2);
-                SpaceShip c1 = children[0]; SpaceShip c2 = children[1];
-
-                //deca mutiraju
-                c1 = Mutate(c1); c2 = Mutate(c2);
-
-                //dodaju se u generaciju
-                newGeneration.Add(c1); newGeneration.Add(c2);
-                generationSize += 2;
+                if(SelectionMethod=="roulette")
+                {
+                    selected.Add(RouletteSelection(currentPopulation));
+                }
+                else if (SelectionMethod == "tournament")
+                {
+                    selected.Add(RouletteSelection(currentPopulation));
+                }
             }
-            return newGeneration;
+            return selected;
         }
 
         public static List<SpaceShip> CreateInitialGeneration()
@@ -206,5 +223,41 @@ namespace LunarLander
             return initialPopulation;
         }
 
+
+        //kreiranje nove generacije od selektovanih jedinki
+        public static List<SpaceShip> CreateGeneration(List<SpaceShip> selectedPopulation)
+        {
+            int generationSize = 0;
+            List<SpaceShip> newGeneration = new List<SpaceShip>();
+            Random r = new Random();
+            while (generationSize < GenerationSize)
+            {
+
+                List<SpaceShip> parents = selectedPopulation.OrderBy(x => r.Next()).Take(2).ToList();
+                SpaceShip p1 = parents[0]; SpaceShip p2 = parents[1];
+                //dobijaju se deca ukrstanjem
+                List<SpaceShip> children = new List<SpaceShip>();
+                if (CrossoverMethod=="onepoint")
+                    children = CrossoverOnePoint(p1, p2);
+                else if (CrossoverMethod == "twopoints")
+                    children = CrossoverTwoPoints(p1, p2);
+                SpaceShip c1 = children[0]; SpaceShip c2 = children[1];
+
+                //deca mutiraju
+                c1 = Mutate(c1); c2 = Mutate(c2);
+
+                //dodaju se u generaciju
+                newGeneration.Add(c1); newGeneration.Add(c2);
+                generationSize += 2;
+            }
+            return newGeneration;
+        }
+
+        
+        //
+        public static void Optimize()
+        {
+
+        }
     }
 }

@@ -35,13 +35,12 @@ namespace LunarLander
 
         public SpaceShip(List<Tuple<string, int>> inRun, bool inElite = false)
         {
-            xM = 1f;
+            xM = 0f;
             yM = 0f;
-            currX = 30;
-            currY = 30;
+            currX = 60;
+            currY = 60;
             run = inRun;
             elite = inElite;
-            GAFitnessFunction = 1;
         }
 
         public void StopShip(float blockFitness)

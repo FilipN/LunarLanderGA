@@ -40,7 +40,7 @@ namespace UnitTests
         {
 
             List<SpaceShip> initialGeneration = GeneticAlgorithm.CreateInitialGeneration();
-            SpaceShip s=GeneticAlgorithm.RouletteSelction(initialGeneration);
+            SpaceShip s=GeneticAlgorithm.RouletteSelection(initialGeneration);
 
         }
 
@@ -50,7 +50,7 @@ namespace UnitTests
         {
 
             List<SpaceShip> initialGeneration = GeneticAlgorithm.CreateInitialGeneration();
-            SpaceShip s = GeneticAlgorithm.TournamentSelction(initialGeneration);
+            SpaceShip s = GeneticAlgorithm.TournamentSelection(initialGeneration);
 
         }
 
@@ -60,7 +60,7 @@ namespace UnitTests
 
             List<SpaceShip> initialGeneration = GeneticAlgorithm.CreateInitialGeneration();
   
-            List<SpaceShip> children = GeneticAlgorithm.Crossover(initialGeneration[0], initialGeneration[1]);
+            List<SpaceShip> children = GeneticAlgorithm.CrossoverOnePoint(initialGeneration[0], initialGeneration[1]);
 
         }
 

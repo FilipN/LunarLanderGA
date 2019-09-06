@@ -18,6 +18,7 @@ namespace LunarLander
         {
             InitializeComponent();
         }
+        public static GeneticAlgorithm GA;
 
         int InPopulationSize, InVelicinaTurnira, InBrojElitnihJedinki, InBrojIteracija;
         float InProcenatMutacijePopulacije, InProcenatMutacijeJedinke;
@@ -25,26 +26,16 @@ namespace LunarLander
         bool InruletskaSelekcija, InfiksanBrojIteracija;
 
         float GraphicWidth, GraphicHeight;
+        List<TerrainBlock> TerrainSquares = new List<TerrainBlock>();
 
+        List<Tuple<Tuple<float, float>, Tuple<float, float>, int>> TerrainLines;//=new List<Tuple<float, float, int>>();
+        List<SpaceShip> currentPopulation = new List<SpaceShip>();
+        int GACurrentIteration = 0;
 
         private bool IsPointInsideSquare(Rectangle rect, PointF point)
         {
             return rect.Contains((int)point.X, (int)point.Y);
         }
-
-
-        
-        
-
-        List<TerrainBlock> TerrainSquares = new List<TerrainBlock>();
-
-        List<Tuple<Tuple<float, float>, Tuple<float, float>, int>> TerrainLines;//=new List<Tuple<float, float, int>>();
-        List<SpaceShip> currentPopulation = new List<SpaceShip>();
-        SpaceShip currSpaceship;
-
-        int EliteUnits = 50;
-        int PopulationSize = 1000;
-
         private void Form1_Load(object sender, EventArgs e)
         {
             GraphicWidth = pictureBox1.Width;
@@ -120,53 +111,14 @@ namespace LunarLander
 
             if (SpaceShip.AliveNumber <= 0)
             {
-
-                /*List<SpaceShip> oldPopulation = currentPopulation;
-                if (oldPopulation.Count > 0)
+                if(GACurrentIteration<GeneticAlgorithm.MaxIterations)
                 {
-                    oldPopulation = oldPopulation.OrderByDescending(it=>it.GAFitnessFunction).ToList<SpaceShip>();
-                    currentPopulation = new List<SpaceShip>();
-
-                    for (int i = 0; i < EliteUnits; i++)
-                    {
-                        currentPopulation.Add(new SpaceShip(oldPopulation[i].run, true));
-                    }
-                } */
-
-
-                //Prebacivanje elitnih jedinki
-
-
-
-                //Sledeca populacija ruletska selekcija
-
-
-
-
-                //Ukrstanje
-
-                //Mutacija
-
-
-                Random r = new Random();
-                while(currentPopulation.Count< PopulationSize)
-                {
-                    List<Tuple<string, int>> currRun = new List<Tuple<string, int>>();
-                    for (int j = 0; j < 20; j++)
-                    {
-                        int actionR = r.Next(4);
-                        if (actionR == 0)
-                            currRun.Add(new Tuple<string, int>("NT", r.Next(100, 400)));
-                        if (actionR == 1)
-                            currRun.Add(new Tuple<string, int>("RL", r.Next(10, 25)));
-                        if (actionR == 2)
-                            currRun.Add(new Tuple<string, int>("RR", r.Next(10, 25)));
-                        if (actionR == 3)
-                            currRun.Add(new Tuple<string, int>("TH", r.Next(10, 25)));
-                    }
-                    currentPopulation.Add(new SpaceShip(currRun));
+                    List<SpaceShip> selected = GeneticAlgorithm.Selection(currentPopulation);
+                    List<SpaceShip> newPopulation = GeneticAlgorithm.CreateGeneration(selected);
+                    currentPopulation = newPopulation;
+                    SpaceShip.AliveNumber = currentPopulation.Count();
+                    GACurrentIteration++;
                 }
-                SpaceShip.AliveNumber = PopulationSize;
             }
 
             //currSpaceship.AIMovement();
@@ -264,6 +216,10 @@ namespace LunarLander
                 return;
             }
             InmapPathFile = openFileDialog1.FileName;
+
+            GeneticAlgorithm.SetParameters(InPopulationSize, 300, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", "onepoint");
+            currentPopulation = GeneticAlgorithm.CreateInitialGeneration();
+            SpaceShip.AliveNumber = GeneticAlgorithm.GenerationSize;
             timer1.Start();
         }
 
