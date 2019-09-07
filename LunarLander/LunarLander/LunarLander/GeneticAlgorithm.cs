@@ -14,8 +14,9 @@ namespace LunarLander
         public static double MutationRate;
         public static string SelectionMethod;
         public static string CrossoverMethod;
+        public static float MapStartX, MapStartY;
 
-        public static void SetParameters(int generationSize, int reproductionSize, int maxIterations, double mutationRate, string selection, string crossover)
+        public static void SetParameters(int generationSize, int reproductionSize, int maxIterations, double mutationRate, string selection, string crossover,float InMapStartX,float InMapStartY)
         {
             GenerationSize = generationSize;
             ReproductionSize = reproductionSize;
@@ -23,7 +24,8 @@ namespace LunarLander
             MutationRate = mutationRate;
             SelectionMethod = selection;
             CrossoverMethod = crossover;
-
+            MapStartX = InMapStartX;
+            MapStartY = InMapStartY;
         }
 
         //velicina turnira za turnirsku selekciju
@@ -102,8 +104,8 @@ namespace LunarLander
 
             List<Tuple<string, int>> child1Run = parent1.run.Take(breakPoint).ToList().Concat(parent2.run.Skip(breakPoint).ToList()).ToList();
             List<Tuple<string, int>> child2Run = parent2.run.Take(breakPoint).ToList().Concat(parent1.run.Skip(breakPoint).ToList()).ToList();
-            SpaceShip child1 = new SpaceShip(child1Run);
-            SpaceShip child2 = new SpaceShip(child2Run);
+            SpaceShip child1 = new SpaceShip(child1Run,GeneticAlgorithm.MapStartX, GeneticAlgorithm.MapStartY);
+            SpaceShip child2 = new SpaceShip(child2Run, GeneticAlgorithm.MapStartX, GeneticAlgorithm.MapStartY);
 
             children.Add(child1);
             children.Add(child2);
@@ -121,8 +123,8 @@ namespace LunarLander
 
             List<Tuple<string, int>> child1Run = parent1.run.Take(breakPoints[0]).ToList().Concat(parent2.run.Skip(breakPoints[0]).Take(breakPoints[1]- breakPoints[0]).ToList()).ToList().Concat(parent1.run.Skip(breakPoints[1]).ToList()).ToList();
             List<Tuple<string, int>> child2Run = parent2.run.Take(breakPoints[0]).ToList().Concat(parent1.run.Skip(breakPoints[0]).Take(breakPoints[1]- breakPoints[0]).ToList()).ToList().Concat(parent2.run.Skip(breakPoints[1]).ToList()).ToList();
-            SpaceShip child1 = new SpaceShip(child1Run);
-            SpaceShip child2 = new SpaceShip(child2Run);
+            SpaceShip child1 = new SpaceShip(child1Run, GeneticAlgorithm.MapStartX, GeneticAlgorithm.MapStartY);
+            SpaceShip child2 = new SpaceShip(child2Run, GeneticAlgorithm.MapStartX, GeneticAlgorithm.MapStartY);
 
             children.Add(child1);
             children.Add(child2);
@@ -217,7 +219,7 @@ namespace LunarLander
                     if (actionR == 3)
                         currRun.Add(new Tuple<string, int>("TH", r.Next(10, 25)));
                 }
-                initialPopulation.Add(new SpaceShip(currRun));
+                initialPopulation.Add(new SpaceShip(currRun, GeneticAlgorithm.MapStartX, GeneticAlgorithm.MapStartY));
             }
 
             return initialPopulation;

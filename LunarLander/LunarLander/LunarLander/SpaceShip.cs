@@ -33,12 +33,12 @@ namespace LunarLander
         bool thrustersState = false;
         bool elite;
 
-        public SpaceShip(List<Tuple<string, int>> inRun, bool inElite = false)
+        public SpaceShip(List<Tuple<string, int>> inRun, float startX, float startY, bool inElite = false)
         {
             xM = 0f;
             yM = 0f;
-            currX = 60;
-            currY = 60;
+            currX = startX;
+            currY = startY;
             run = inRun;
             elite = inElite;
         }

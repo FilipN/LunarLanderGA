@@ -24,6 +24,7 @@ namespace LunarLander
         float InProcenatMutacijePopulacije, InProcenatMutacijeJedinke;
         string InmapPathFile = "";
         bool InruletskaSelekcija, InfiksanBrojIteracija;
+        float InMapStartX, InMapStartY;
 
         float GraphicWidth, GraphicHeight;
         List<TerrainBlock> TerrainSquares = new List<TerrainBlock>();
@@ -66,6 +67,12 @@ namespace LunarLander
                     terrainMatrix[i, j] = int.Parse(col.Trim());
                     if (terrainMatrix[i, j] > 0)
                         TerrainSquares.Add(new TerrainBlock(new Rectangle(j * SquareWidth, i * SquareWidth, SquareWidth, SquareWidth), terrainMatrix[i, j]));
+                    if (terrainMatrix[i, j] == -1)
+                    {
+                        InMapStartX = (float)(j * SquareWidth + SquareWidth / 2.0);
+                        InMapStartY = (float)(i * SquareWidth + SquareWidth / 2.0);
+                    }
+
                     j++;
                 }
                 i++;
@@ -217,7 +224,7 @@ namespace LunarLander
             }
             InmapPathFile = openFileDialog1.FileName;
 
-            GeneticAlgorithm.SetParameters(InPopulationSize, 300, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", "onepoint");
+            GeneticAlgorithm.SetParameters(InPopulationSize, 300, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", "onepoint",InMapStartX,InMapStartY);
             currentPopulation = GeneticAlgorithm.CreateInitialGeneration();
             SpaceShip.AliveNumber = GeneticAlgorithm.GenerationSize;
             timer1.Start();
