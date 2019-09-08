@@ -20,10 +20,12 @@ namespace LunarLander
         }
         public static GeneticAlgorithm GA;
 
+        List<float> prosekFCTrenutnePopulacije = new List<float>();
+        List<List<float>> prosekFCSvihPopulacija = new List<List<float>>();
+
         int InPopulationSize, InVelicinaTurnira, InBrojElitnihJedinki, InBrojIteracija;
         float InProcenatMutacijePopulacije, InProcenatMutacijeJedinke;
-        string InmapPathFile = "";
-        bool InruletskaSelekcija, InfiksanBrojIteracija;
+        bool InruletskaSelekcija, InfiksanBrojIteracija, InOnePoint;
         float InMapStartX, InMapStartY;
 
         float GraphicWidth, GraphicHeight;
@@ -37,15 +39,15 @@ namespace LunarLander
         {
             return rect.Contains((int)point.X, (int)point.Y);
         }
-        private void Form1_Load(object sender, EventArgs e)
+
+        void loadMap(string filepath= @"..\..\Maps\matrix_15x27_1.txt")
         {
-            GraphicWidth = pictureBox1.Width;
-            GraphicHeight = pictureBox1.Height;
+            TerrainSquares.Clear();
             int SquareWidth = 0;
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), @"Maps\matrix_14x26.txt");
+            //var path = Path.Combine(Directory.GetCurrentDirectory(), @"Maps\matrix_14x26_1.txt");
 
-            string absolutePath = @"..\..\Maps\matrix_14x26.txt";
+            string absolutePath = filepath;
 
             String input = File.ReadAllText(absolutePath);
             int i = 0, j = 0;
@@ -77,7 +79,15 @@ namespace LunarLander
                 }
                 i++;
             }
+            pictureBox1.Refresh();
+        }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            GraphicWidth = pictureBox1.Width;
+            GraphicHeight = pictureBox1.Height;
+
+            loadMap();
             //currSpaceship = new SpaceShip();
             pictureBox1.BackColor = Color.Black;
 
@@ -93,7 +103,7 @@ namespace LunarLander
                 item.AIMovement();
                 item.move();
 
-                bool linesIntersect = false ;
+                bool linesIntersect = false;
 
                 foreach (TerrainBlock block in TerrainSquares)
                 {
@@ -108,7 +118,7 @@ namespace LunarLander
                     }
                 }
 
-                if (!linesIntersect &&(item.MainLineB.X < 0 || item.MainLineB.X > pictureBox1.Width || item.MainLineB.Y < 0 || item.MainLineB.Y > pictureBox1.Height))
+                if (!linesIntersect && (item.MainLineB.X < 0 || item.MainLineB.X > pictureBox1.Width || item.MainLineB.Y < 0 || item.MainLineB.Y > pictureBox1.Height))
                 {
                     item.AIAlive = false;
                     SpaceShip.AliveNumber--;
@@ -116,20 +126,38 @@ namespace LunarLander
                 }
             }
 
+            float sumaFunkcijaCilja = 0, prosekFunkcijaCilja;
             if (SpaceShip.AliveNumber <= 0)
             {
-                if(GACurrentIteration<GeneticAlgorithm.MaxIterations)
+                //izracunavanje proseka funkcije cilja svih jedinki
+                foreach (SpaceShip item in currentPopulation)
                 {
+                    sumaFunkcijaCilja += item.GAFitnessFunction;
+                }
+                prosekFunkcijaCilja = sumaFunkcijaCilja / currentPopulation.Count;
+                prosekFCTrenutnePopulacije.Add(prosekFunkcijaCilja);
+                pictureBox2.Refresh();
+
+                if (GACurrentIteration < GeneticAlgorithm.MaxIterations)
+                {
+
                     List<SpaceShip> selected = GeneticAlgorithm.Selection(currentPopulation);
                     List<SpaceShip> newPopulation = GeneticAlgorithm.CreateGeneration(selected);
                     currentPopulation = newPopulation;
                     SpaceShip.AliveNumber = currentPopulation.Count();
                     GACurrentIteration++;
                 }
-            }
+                else
+                {
+                    prosekFCSvihPopulacija.Add(prosekFCTrenutnePopulacije);
+                    prosekFCTrenutnePopulacije = new List<float>();
+                    pictureBox3.Refresh();
+                    timer1.Stop();
 
-            //currSpaceship.AIMovement();
+                }
+            }
             pictureBox1.Refresh();
+
         }
 
        
@@ -156,8 +184,23 @@ namespace LunarLander
             foreach (TerrainBlock block in TerrainSquares)
             {
                 block.draw(g);
-                //g.FillRectangle(sb, rect);
             }
+
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox2_Paint(object sender, PaintEventArgs e)
+        {
+            FunctionUtil.drawFunction(pictureBox2.Width, pictureBox2.Height, e.Graphics, new List<List<float>> { prosekFCTrenutnePopulacije },InBrojIteracija);
+        }
+
+        private void pictureBox3_Paint(object sender, PaintEventArgs e)
+        {
+            FunctionUtil.drawFunction(pictureBox3.Width, pictureBox3.Height, e.Graphics, prosekFCSvihPopulacija, InBrojIteracija);
 
         }
 
@@ -190,6 +233,7 @@ namespace LunarLander
         {
             InfiksanBrojIteracija = radioButton3.Checked;
             InruletskaSelekcija = radioButton1.Checked;
+            InOnePoint = radioButton6.Checked;
 
             if (!Int32.TryParse(textBox5.Text, out InPopulationSize) || InPopulationSize <= 0 || InPopulationSize > 4000)
             {
@@ -222,11 +266,12 @@ namespace LunarLander
                 MessageBox.Show("Broj iteracija nije broj izmedju 0 i 4000");
                 return;
             }
-            InmapPathFile = openFileDialog1.FileName;
 
+            prosekFCTrenutnePopulacije.Clear();
             GeneticAlgorithm.SetParameters(InPopulationSize, 300, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", "onepoint",InMapStartX,InMapStartY);
             currentPopulation = GeneticAlgorithm.CreateInitialGeneration();
             SpaceShip.AliveNumber = GeneticAlgorithm.GenerationSize;
+            GACurrentIteration = 0;
             timer1.Start();
         }
 
@@ -235,6 +280,10 @@ namespace LunarLander
             openFileDialog1.FileName = "";
             openFileDialog1.Title = "Učitavanje mape";
             DialogResult putanjaFajla = openFileDialog1.ShowDialog();
+            if (!String.IsNullOrEmpty(openFileDialog1.FileName))
+            {
+                loadMap(openFileDialog1.FileName);
+            }
         }
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)

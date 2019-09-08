@@ -207,16 +207,22 @@ namespace LunarLander
             while (initialPopulation.Count < GeneticAlgorithm.GenerationSize)
             {
                 List<Tuple<string, int>> currRun = new List<Tuple<string, int>>();
-                for (int j = 0; j < 20; j++)
+                for (int j = 0; j < 50; j++)
                 {
-                    int actionR = r.Next(4);
+                    int actionR = r.Next(3);
                     if (actionR == 0)
-                        currRun.Add(new Tuple<string, int>("NT", r.Next(100, 400)));
+                        currRun.Add(new Tuple<string, int>("NT", r.Next(100, 200)));
                     if (actionR == 1)
-                        currRun.Add(new Tuple<string, int>("RL", r.Next(10, 25)));
+                    {
+                        string rtSt;
+                        int rot = r.Next(2);
+                        if (rot == 0)
+                            rtSt = "RL";
+                        else
+                            rtSt = "RR";
+                        currRun.Add(new Tuple<string, int>(rtSt, r.Next(10, 25)));
+                    }
                     if (actionR == 2)
-                        currRun.Add(new Tuple<string, int>("RR", r.Next(10, 25)));
-                    if (actionR == 3)
                         currRun.Add(new Tuple<string, int>("TH", r.Next(10, 25)));
                 }
                 initialPopulation.Add(new SpaceShip(currRun, GeneticAlgorithm.MapStartX, GeneticAlgorithm.MapStartY));
