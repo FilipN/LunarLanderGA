@@ -268,7 +268,7 @@ namespace LunarLander
             }
 
             prosekFCTrenutnePopulacije.Clear();
-            GeneticAlgorithm.SetParameters(InPopulationSize, 300, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", "onepoint",InMapStartX,InMapStartY);
+            GeneticAlgorithm.SetParameters(InPopulationSize, 100, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", "onepoint",InMapStartX,InMapStartY);
             currentPopulation = GeneticAlgorithm.CreateInitialGeneration();
             SpaceShip.AliveNumber = GeneticAlgorithm.GenerationSize;
             GACurrentIteration = 0;

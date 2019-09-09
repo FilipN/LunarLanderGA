@@ -52,23 +52,39 @@ namespace LunarLander
 
         //Selekcija ruletska- vece sanse da u reprodukciji ucestvuju jedinke koje su vise prilagodjenje
         //verovatnoca da jedinka i ucestvuje u reprodukciji je f(i)/suma po j f(j)
-        public static SpaceShip RouletteSelection(List<SpaceShip> population)
+        public static SpaceShip RouletteSelection(List<SpaceShip> population, List<int> selectedIndex)
         {
 
             double totalFitness = population.Sum(x => x.GAFitnessFunction);
-            double selectedValue = GetRandomDouble(0, totalFitness);
+            
 
             double currentSum = 0;
+            double selectedValue = 0;
+            
 
-            for (int i = 0; i < GenerationSize; i++)
-            {
-                currentSum += population[i].GAFitnessFunction;
-                //vraca se prva jedinka koja ispuni uslov 
-                if (currentSum > selectedValue)
-                    return population[i];
+            while(true) {
+                selectedValue = GetRandomDouble(0, totalFitness);
+                currentSum = 0;
+                for (int i = 0; i < GenerationSize; i++)
+                {
+                    currentSum += population[i].GAFitnessFunction;
+                    //vraca se prva jedinka koja ispuni uslov 
+                    if (currentSum > selectedValue)
+                    {
+                        //i vec postoji
+                        if(selectedIndex.IndexOf(i)>=0)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            selectedIndex.Add(i);
+                            return population[i];
+                        }
+                        
+                    }                      
+                }
             }
-
-            return null;
         }
 
 
@@ -186,15 +202,16 @@ namespace LunarLander
         public static List<SpaceShip> Selection(List<SpaceShip> currentPopulation)
         {
             List<SpaceShip> selected = new List<SpaceShip>();
+            List<int> selectedIndex = new List<int>();
             for (int i=0; i<ReproductionSize; i++)
             {
                 if(SelectionMethod=="roulette")
                 {
-                    selected.Add(RouletteSelection(currentPopulation));
+                    selected.Add(RouletteSelection(currentPopulation, selectedIndex ));
                 }
                 else if (SelectionMethod == "tournament")
                 {
-                    selected.Add(RouletteSelection(currentPopulation));
+                    selected.Add(TournamentSelection(currentPopulation ));
                 }
             }
             return selected;
