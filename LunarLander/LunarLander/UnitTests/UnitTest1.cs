@@ -40,7 +40,7 @@ namespace UnitTests
         {
 
             List<SpaceShip> initialGeneration = GeneticAlgorithm.CreateInitialGeneration();
-            SpaceShip s=GeneticAlgorithm.RouletteSelection(initialGeneration);
+            //SpaceShip s=GeneticAlgorithm.RouletteSelection(initialGeneration);
 
         }
 
@@ -50,7 +50,7 @@ namespace UnitTests
         {
 
             List<SpaceShip> initialGeneration = GeneticAlgorithm.CreateInitialGeneration();
-            SpaceShip s = GeneticAlgorithm.TournamentSelection(initialGeneration);
+            //SpaceShip s = GeneticAlgorithm.TournamentSelection(initialGeneration);
 
         }
 

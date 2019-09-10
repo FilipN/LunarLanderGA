@@ -140,10 +140,17 @@ namespace LunarLander
 
                 if (GACurrentIteration < GeneticAlgorithm.MaxIterations)
                 {
-
+                    //elitne jedinke
+                    List<SpaceShip> elitePopulation = new List<SpaceShip>();
+                    List<SpaceShip> elite = currentPopulation.OrderBy(x=>x.GAFitnessFunction).Skip(Math.Max(0, currentPopulation.Count() - GeneticAlgorithm.ElitePopulation)).ToList();
+                    foreach(SpaceShip s in elite)
+                    {
+                        SpaceShip newSP = new SpaceShip(s.run, GeneticAlgorithm.MapStartX, GeneticAlgorithm.MapStartY,true);
+                        elitePopulation.Add(newSP);
+                    }
                     List<SpaceShip> selected = GeneticAlgorithm.Selection(currentPopulation);
                     List<SpaceShip> newPopulation = GeneticAlgorithm.CreateGeneration(selected);
-                    currentPopulation = newPopulation;
+                    currentPopulation = elitePopulation.Concat(newPopulation).ToList();
                     SpaceShip.AliveNumber = currentPopulation.Count();
                     GACurrentIteration++;
                     label11.Text = GACurrentIteration.ToString();
@@ -275,7 +282,7 @@ namespace LunarLander
             }
 
             prosekFCTrenutnePopulacije.Clear();
-            GeneticAlgorithm.SetParameters(InPopulationSize, InReproductionSize, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", "onepoint",InMapStartX,InMapStartY);
+            GeneticAlgorithm.SetParameters(InPopulationSize, InReproductionSize, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", InOnePoint == true ? "onepoint" : "twopoints", InMapStartX,InMapStartY, InBrojElitnihJedinki);
             currentPopulation = GeneticAlgorithm.CreateInitialGeneration();
             SpaceShip.AliveNumber = GeneticAlgorithm.GenerationSize;
             GACurrentIteration = 0;

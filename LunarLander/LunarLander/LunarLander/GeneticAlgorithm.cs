@@ -14,9 +14,10 @@ namespace LunarLander
         public static double MutationRate;
         public static string SelectionMethod;
         public static string CrossoverMethod;
+        public static int ElitePopulation;
         public static float MapStartX, MapStartY;
 
-        public static void SetParameters(int generationSize, int reproductionSize, int maxIterations, double mutationRate, string selection, string crossover,float InMapStartX,float InMapStartY)
+        public static void SetParameters(int generationSize, int reproductionSize, int maxIterations, double mutationRate, string selection, string crossover,float InMapStartX,float InMapStartY, int elite)
         {
             GenerationSize = generationSize;
             ReproductionSize = reproductionSize;
@@ -26,6 +27,7 @@ namespace LunarLander
             CrossoverMethod = crossover;
             MapStartX = InMapStartX;
             MapStartY = InMapStartY;
+            ElitePopulation = elite;
         }
 
         //velicina turnira za turnirsku selekciju
@@ -90,7 +92,7 @@ namespace LunarLander
 
         //pobednik turnira je jedinka sa najboljom prilagodjenoscu
         //sto je veca velicina turnira nekvalitetne jedinke imaju manje sanse da budu izabrane
-        public static SpaceShip TournamentSelection(List<SpaceShip> population)
+        public static SpaceShip TournamentSelection(List<SpaceShip> population, List<int> selectedIndex)
         {
 
             List<int> tournamet = GetNRandomIntegers(GeneticAlgorithm.TournamentSize, GeneticAlgorithm.GenerationSize);
@@ -211,7 +213,7 @@ namespace LunarLander
                 }
                 else if (SelectionMethod == "tournament")
                 {
-                    selected.Add(TournamentSelection(currentPopulation ));
+                    selected.Add(TournamentSelection(currentPopulation, selectedIndex));
                 }
             }
             return selected;
@@ -255,7 +257,7 @@ namespace LunarLander
             int generationSize = 0;
             List<SpaceShip> newGeneration = new List<SpaceShip>();
             Random r = new Random();
-            while (generationSize < GenerationSize)
+            while (generationSize < GenerationSize-ElitePopulation)
             {
 
                 List<SpaceShip> parents = selectedPopulation.OrderBy(x => r.Next()).Take(2).ToList();
