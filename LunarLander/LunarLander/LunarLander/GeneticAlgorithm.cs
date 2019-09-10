@@ -15,9 +15,10 @@ namespace LunarLander
         public static string SelectionMethod;
         public static string CrossoverMethod;
         public static int ElitePopulation;
+        public static int TournamentSize;
         public static float MapStartX, MapStartY;
 
-        public static void SetParameters(int generationSize, int reproductionSize, int maxIterations, double mutationRate, string selection, string crossover,float InMapStartX,float InMapStartY, int elite)
+        public static void SetParameters(int generationSize, int reproductionSize, int maxIterations, double mutationRate, string selection, string crossover,float InMapStartX,float InMapStartY, int elite, int tsize)
         {
             GenerationSize = generationSize;
             ReproductionSize = reproductionSize;
@@ -28,10 +29,11 @@ namespace LunarLander
             MapStartX = InMapStartX;
             MapStartY = InMapStartY;
             ElitePopulation = elite;
+            TournamentSize = tsize;
         }
 
         //velicina turnira za turnirsku selekciju
-        public static int TournamentSize = 10;
+        
 
         public static double GetRandomDouble(double min, double max)
         {
@@ -95,19 +97,31 @@ namespace LunarLander
         public static SpaceShip TournamentSelection(List<SpaceShip> population, List<int> selectedIndex)
         {
 
-            List<int> tournamet = GetNRandomIntegers(GeneticAlgorithm.TournamentSize, GeneticAlgorithm.GenerationSize);
-            float max = 0;
-            int maxIndex = 0;
-            foreach (int i in tournamet)
+            List<int> tournamet;
+            while (true)
             {
-                if (population[i].GAFitnessFunction > max)
+                tournamet = GetNRandomIntegers(GeneticAlgorithm.TournamentSize, GeneticAlgorithm.GenerationSize);
+                float max = 0;
+                int maxIndex = 0;
+                foreach (int i in tournamet)
                 {
-                    max = population[i].GAFitnessFunction;
-                    maxIndex = i;
+                    if (population[i].GAFitnessFunction > max)
+                    {
+                        max = population[i].GAFitnessFunction;
+                        maxIndex = i;
+                    }
                 }
-            }
+                if (selectedIndex.IndexOf(maxIndex) < 0)
+                {
+                    selectedIndex.Add(maxIndex);
+                    return population[maxIndex];
+                }
+                    
 
-            return population[maxIndex];
+            }
+            
+
+            
 
         }
 

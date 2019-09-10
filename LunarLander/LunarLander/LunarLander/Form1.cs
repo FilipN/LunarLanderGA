@@ -255,7 +255,7 @@ namespace LunarLander
                 return;
             }
 
-            if (!InruletskaSelekcija && (!Int32.TryParse(textBox6.Text, out InVelicinaTurnira) || InVelicinaTurnira <= 5 || InVelicinaTurnira > 20))
+            if (!InruletskaSelekcija && (!Int32.TryParse(textBox6.Text, out InVelicinaTurnira) || InVelicinaTurnira <= 2 || InVelicinaTurnira > 20))
             {
                 MessageBox.Show("Velicina turnira nije broj izmedju 5 i 20");
                 return;
@@ -282,7 +282,7 @@ namespace LunarLander
             }
 
             prosekFCTrenutnePopulacije.Clear();
-            GeneticAlgorithm.SetParameters(InPopulationSize, InReproductionSize, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", InOnePoint == true ? "onepoint" : "twopoints", InMapStartX,InMapStartY, InBrojElitnihJedinki);
+            GeneticAlgorithm.SetParameters(InPopulationSize, InReproductionSize, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", InOnePoint == true ? "onepoint" : "twopoints", InMapStartX,InMapStartY, InBrojElitnihJedinki, InVelicinaTurnira);
             currentPopulation = GeneticAlgorithm.CreateInitialGeneration();
             SpaceShip.AliveNumber = GeneticAlgorithm.GenerationSize;
             GACurrentIteration = 0;
