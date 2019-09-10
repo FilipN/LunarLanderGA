@@ -15,7 +15,7 @@ namespace LunarLander
             float yRange = 0;
             foreach (List<float> lista in func)
             {
-                for (int i = 0; i < lista.Count - 1; i++)
+                for (int i = 0; i < lista.Count; i++)
                 {
                     if (lista[i] > yRange)
                         yRange = lista[i];
@@ -32,7 +32,7 @@ namespace LunarLander
             float xTick = fwidth / xRange;
             float yCoeff = fheight / yRange;
 
-
+            float yStart = height - verMargin;
 
             for (int k = 0; k < func.Count; k++)
             {
@@ -43,8 +43,8 @@ namespace LunarLander
                     pen.Color = Color.Black;
                 for (int i = 0; i < lista.Count - 1; i++)
                 {
-                    float yCurr = height - verMargin - lista[i] * yCoeff;
-                    float yNext = height - verMargin - lista[i + 1] * yCoeff;
+                    float yCurr = yStart - lista[i] * yCoeff;
+                    float yNext = yStart - lista[i + 1] * yCoeff;
 
                     g.DrawLine(pen, horMargin + i * xTick, yCurr, horMargin + (i + 1) * xTick, yNext);
                 }
