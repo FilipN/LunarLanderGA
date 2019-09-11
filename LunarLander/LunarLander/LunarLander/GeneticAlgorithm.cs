@@ -242,7 +242,7 @@ namespace LunarLander
             while (initialPopulation.Count < GeneticAlgorithm.GenerationSize)
             {
                 List<Tuple<string, int>> currRun = new List<Tuple<string, int>>();
-                for (int j = 0; j < 50; j++)
+                for (int j = 0; j < SpaceShip.ChromosomeSize; j++)
                 {
                     int actionR = r.Next(3);
                     if (actionR == 0)

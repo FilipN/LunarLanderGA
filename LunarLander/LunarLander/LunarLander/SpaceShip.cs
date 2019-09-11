@@ -10,7 +10,7 @@ namespace LunarLander
     public class SpaceShip : IComparable
     {
 
-        public static int ChromosomeSize = 20;
+        public static int ChromosomeSize = 40;
         public static int AliveNumber { get; set; } = 0;
         public static float ShipR { get; set; } = 10;
 
