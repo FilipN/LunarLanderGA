@@ -25,3 +25,4 @@ LunarLander/LunarLander/LunarLander/obj/Debug/LunarLander.csprojAssemblyReferenc
 LunarLander/LunarLander/LunarLander/obj/Debug/LunarLander.exe
 LunarLander/LunarLander/LunarLander/obj/Debug/LunarLander.pdb
 LunarLander/LunarLander/LunarLander/SpaceShip.cs
+*.ide-shm

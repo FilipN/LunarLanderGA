@@ -37,14 +37,14 @@ namespace LunarLander
 
         public static double GetRandomDouble(double min, double max)
         {
-            Random random = new Random();
+            Random random = new Random(Guid.NewGuid().GetHashCode());
             return min + (random.NextDouble() * (max - min));
         }
 
         public static List<int> GetNRandomIntegers(int count, int maxValue, int minValue = 0)
         {
             HashSet<int> candidates = new HashSet<int>();
-            Random r = new Random();
+            Random r = new Random(Guid.NewGuid().GetHashCode());
             while (candidates.Count < count)
             {
                 // May strike a duplicate.
@@ -131,7 +131,7 @@ namespace LunarLander
 
             //public List<Tuple<string, int>> run
             List<SpaceShip> children = new List<SpaceShip>(2);
-            Random r = new Random();
+            Random r = new Random(Guid.NewGuid().GetHashCode());
             int breakPoint = r.Next(1, SpaceShip.ChromosomeSize - 1);
 
             List<Tuple<string, int>> child1Run = parent1.run.Take(breakPoint).ToList().Concat(parent2.run.Skip(breakPoint).ToList()).ToList();
@@ -170,12 +170,14 @@ namespace LunarLander
 
         public static SpaceShip Mutate(SpaceShip ship)
         {
-            Random r = new Random();
+            Random r = new Random(Guid.NewGuid().GetHashCode());
             double randomValue = r.NextDouble();
             if (randomValue < MutationRate)
             {
                 int randomIndex = r.Next(SpaceShip.ChromosomeSize);
+                //Console.WriteLine(randomIndex);
                 int actionR = r.Next(4);
+                //Console.WriteLine("akcija" + actionR);
                 if (actionR == 0)
                 {
                     Tuple<string, int> newRun = new Tuple<string, int>("NT", r.Next(100, 400));
@@ -236,7 +238,7 @@ namespace LunarLander
         public static List<SpaceShip> CreateInitialGeneration()
         {
             List<SpaceShip> initialPopulation = new List<SpaceShip>();
-            Random r = new Random();
+            Random r = new Random(Guid.NewGuid().GetHashCode());
             while (initialPopulation.Count < GeneticAlgorithm.GenerationSize)
             {
                 List<Tuple<string, int>> currRun = new List<Tuple<string, int>>();
@@ -270,7 +272,7 @@ namespace LunarLander
         {
             int generationSize = 0;
             List<SpaceShip> newGeneration = new List<SpaceShip>();
-            Random r = new Random();
+            Random r = new Random(Guid.NewGuid().GetHashCode());
             while (generationSize < GenerationSize-ElitePopulation)
             {
 

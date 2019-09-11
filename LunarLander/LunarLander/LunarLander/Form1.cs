@@ -24,14 +24,13 @@ namespace LunarLander
         List<List<float>> prosekFCSvihPopulacija = new List<List<float>>();
 
         int InPopulationSize, InVelicinaTurnira, InBrojElitnihJedinki, InBrojIteracija, InReproductionSize;
-        float InProcenatMutacijePopulacije, InProcenatMutacijeJedinke;
+        float InProcenatMutacijeJedinke;
         bool InruletskaSelekcija, InfiksanBrojIteracija, InOnePoint;
         float InMapStartX, InMapStartY;
 
         float GraphicWidth, GraphicHeight;
         List<TerrainBlock> TerrainSquares = new List<TerrainBlock>();
 
-        List<Tuple<Tuple<float, float>, Tuple<float, float>, int>> TerrainLines;//=new List<Tuple<float, float, int>>();
         List<SpaceShip> currentPopulation = new List<SpaceShip>();
         int GACurrentIteration = 0;
 
@@ -239,7 +238,6 @@ namespace LunarLander
 
         private void button1_Click(object sender, EventArgs e)
         {
-            InfiksanBrojIteracija = radioButton3.Checked;
             InruletskaSelekcija = radioButton1.Checked;
             InOnePoint = radioButton6.Checked;
 
@@ -260,11 +258,7 @@ namespace LunarLander
                 MessageBox.Show("Velicina turnira nije broj izmedju 5 i 20");
                 return;
             }
-            if (!float.TryParse(textBox1.Text, out InProcenatMutacijePopulacije) || InProcenatMutacijePopulacije <= 0 || InProcenatMutacijePopulacije > 40)
-            {
-                MessageBox.Show("Procenat mutacije populacije nije broj izmedju 0 i 40");
-                return;
-            }
+
             if (!float.TryParse(textBox2.Text, out InProcenatMutacijeJedinke) || InProcenatMutacijeJedinke <= 0 || InProcenatMutacijeJedinke > 40)
             {
                 MessageBox.Show("Procenat mutacije jedinke nije broj izmedju 0 i 40");
@@ -275,13 +269,20 @@ namespace LunarLander
                 MessageBox.Show("Broj elitnih jedinki nije broj izmedju 0 i 4000");
                 return;
             }
-            if (InfiksanBrojIteracija && (!Int32.TryParse(textBox7.Text, out InBrojIteracija) || InBrojIteracija <= 0 || InBrojIteracija > 5000))
+            if (!Int32.TryParse(textBox7.Text, out InBrojIteracija) || InBrojIteracija <= 0 || InBrojIteracija > 5000)
             {
                 MessageBox.Show("Broj iteracija nije broj izmedju 0 i 4000");
                 return;
             }
 
             prosekFCTrenutnePopulacije.Clear();
+            pictureBox2.Refresh();
+
+            foreach (TerrainBlock block in TerrainSquares)
+            {
+                block.NumberOfAIEnds = 0;
+            }
+
             GeneticAlgorithm.SetParameters(InPopulationSize, InReproductionSize, InBrojIteracija, InProcenatMutacijeJedinke, InruletskaSelekcija==true ? "roulette" : "tournament", InOnePoint == true ? "onepoint" : "twopoints", InMapStartX,InMapStartY, InBrojElitnihJedinki, InVelicinaTurnira);
             currentPopulation = GeneticAlgorithm.CreateInitialGeneration();
             SpaceShip.AliveNumber = GeneticAlgorithm.GenerationSize;
